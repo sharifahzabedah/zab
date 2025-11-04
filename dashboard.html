@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OE Circle | Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .status-new { background-color: #dbeafe; color: #1e40af; }
+        .status-reviewed { background-color: #fee2e2; color: #991b1b; }
+        .status-shortlisted { background-color: #d1fae5; color: #065f46; }
+        .status-rejected { background-color: #e5e7eb; color: #4b5563; }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Header Navigation -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                         <div class="flex items-center justify-center bg-indigo-500 rounded-full h-10 w-10">
+                            <svg class="h-6 w-6 text-white" fill="none" viewBox="0 B0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                    </div>
+                    <span class="ml-3 font-bold text-xl text-gray-800">OE Circle Admin</span>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-sm font-medium text-gray-600 mr-4">Welcome, Admin!</span>
+                    <div class="ml-4">
+                        <img class="h-10 w-10 rounded-full" src="https://placehold.co/100x100/E2E8F0/4A5568?text=AV" alt="User Avatar">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-6">Idea Bank Dashboard</h1>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+            <div class="bg-white rounded-lg shadow p-5 flex items-center justify-between">
+                <div>
+                    <div class="text-sm font-medium text-gray-500">Total Submissions</div>
+                    <div class="text-3xl font-bold text-gray-900">1,284</div>
+                </div>
+                <div class="bg-blue-100 rounded-full p-3">
+                    <i data-lucide="inbox" class="h-6 w-6 text-blue-600"></i>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-5 flex items-center justify-between">
+                <div>
+                    <div class="text-sm font-medium text-gray-500">Pending Review</div>
+                    <div class="text-3xl font-bold text-gray-900">72</div>
+                </div>
+                 <div class="bg-yellow-100 rounded-full p-3">
+                    <i data-lucide="loader" class="h-6 w-6 text-yellow-600"></i>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-5 flex items-center justify-between">
+                <div>
+                    <div class="text-sm font-medium text-gray-500">Shortlisted</div>
+                    <div class="text-3xl font-bold text-gray-900">15</div>
+                </div>
+                 <div class="bg-green-100 rounded-full p-3">
+                    <i data-lucide="star" class="h-6 w-6 text-green-600"></i>
+                </div>
+            </div>
+            <div class="bg-white rounded-lg shadow p-5 flex items-center justify-between">
+                <div>
+                    <div class="text-sm font-medium text-gray-500">Implemented</div>
+                    <div class="text-3xl font-bold text-gray-900">4</div>
+                </div>
+                 <div class="bg-indigo-100 rounded-full p-3">
+                    <i data-lucide="rocket" class="h-6 w-6 text-indigo-600"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts and Leaderboard -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+            <!-- Breakdown by Division -->
+            <div class="bg-white rounded-lg shadow p-6 lg:col-span-2">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Submissions by Division</h2>
+                <canvas id="divisionChart"></canvas>
+            </div>
+             <!-- Leaderboard -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Top Contributors</h2>
+                 <ul class="space-y-4">
+                        <li class="flex items-center">
+                            <span class="text-lg font-bold text-yellow-500 mr-3">1.</span>
+                            <img class="h-10 w-10 rounded-full mr-3" src="https://placehold.co/100x100/E0E7FF/4338CA?text=SC" alt="">
+                            <div class="flex-1">
+                                <p class="font-semibold text-gray-800">Sarah Chen</p>
+                                <p class="text-sm text-gray-500">Marketing</p>
+                            </div>
+                            <span class="font-bold text-gray-800">32 Ideas</span>
+                        </li>
+                         <li class="flex items-center">
+                            <span class="text-lg font-bold text-gray-400 mr-3">2.</span>
+                            <img class="h-10 w-10 rounded-full mr-3" src="https://placehold.co/100x100/D1D5DB/374151?text=JS" alt="">
+                            <div class="flex-1">
+                                <p class="font-semibold text-gray-800">Jane Smith</p>
+                                <p class="text-sm text-gray-500">Operations</p>
+                            </div>
+                            <span class="font-bold text-gray-800">25 Ideas</span>
+                        </li>
+                         <li class="flex items-center">
+                            <span class="text-lg font-bold text-yellow-700 mr-3">3.</span>
+                            <img class="h-10 w-10 rounded-full mr-3" src="https://placehold.co/100x100/FBCFE8/831843?text=MO" alt="">
+                            <div class="flex-1">
+                                <p class="font-semibold text-gray-800">Mike Olsen</p>
+                                <p class="text-sm text-gray-500">Engineering</p>
+                            </div>
+                            <span class="font-bold text-gray-800">18 Ideas</span>
+                        </li>
+                    </ul>
+            </div>
+            <!-- Breakdown by Theme -->
+            <div class="bg-white rounded-lg shadow p-6 lg:col-span-3">
+                 <h2 class="text-xl font-bold text-gray-800 mb-4">Idea Themes & Focus</h2>
+                 <canvas id="themeChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Submissions Table -->
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <div class="p-6">
+                <h2 class="text-xl font-bold text-gray-800">All Submissions</h2>
+                <!-- Filters here -->
+            </div>
+            <div class="overflow-x-auto">
+                 <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Idea Title</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitter</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reviewer</th>
+                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <!-- Sample Row 1 -->
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">Automate Weekly Reporting</div>
+                                <div class="text-xs text-gray-500">Submitted: 2023-10-02</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">Sarah Chen</div>
+                                <div class="text-xs text-gray-500">Marketing</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full status-shortlisted">Shortlisted</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                <div class="font-semibold">David Lee</div>
+                                <div class="text-xs italic text-gray-500 mt-1">"Promising idea. Needs costing."</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <a href="#" class="text-indigo-600 hover:text-indigo-900">View Details</a>
+                            </td>
+                        </tr>
+                        <!-- Sample Row 2 -->
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">New Onboarding Checklist</div>
+                                <div class="text-xs text-gray-500">Submitted: 2023-10-01</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">John Doe</div>
+                                <div class="text-xs text-gray-500">Human Resources</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full status-new">New</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 italic">
+                                Awaiting Review
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <a href="#" class="text-indigo-600 hover:text-indigo-900">Review Now</a>
+                            </td>
+                        </tr>
+                        <!-- Sample Row 3 -->
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">Forklift Safety Sensors</div>
+                                <div class="text-xs text-gray-500">Submitted: 2023-09-28</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">Mike Olsen</div>
+                                <div class="text-xs text-gray-500">Engineering</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full status-rejected">Rejected</span>
+                            </td>
+                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                <div class="font-semibold">Jane Smith</div>
+                                <div class="text-xs italic text-gray-500 mt-1">"Similar tech already in trial."</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <a href="#" class="text-indigo-600 hover:text-indigo-900">View Details</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Chart.js implementation
+        const divisionCtx = document.getElementById('divisionChart').getContext('2d');
+        const divisionChart = new Chart(divisionCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Engineering', 'Marketing', 'Operations', 'Sales', 'HR', 'Finance'],
+                datasets: [{
+                    label: '# of Submissions',
+                    data: [210, 180, 350, 150, 95, 120],
+                    backgroundColor: 'rgba(79, 70, 229, 0.8)',
+                    borderColor: 'rgba(79, 70, 229, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true } },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        const themeCtx = document.getElementById('themeChart').getContext('2d');
+        const themeChart = new Chart(themeCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Automation', 'Cost Saving', 'Time Saving', 'Safety', 'Employee Experience', 'Quality'],
+                datasets: [{
+                    label: 'Idea Themes',
+                    data: [300, 250, 200, 150, 100, 284],
+                    backgroundColor: [
+                        '#4f46e5', '#7c3aed', '#10b981', '#f59e0b', '#ef4444', '#3b82f6'
+                    ],
+                    hoverOffset: 4
+                }]
+            },
+             options: {
+                responsive: true,
+                plugins: { legend: { position: 'right' } }
+            }
+        });
+    </script>
+</body>
+</html>
