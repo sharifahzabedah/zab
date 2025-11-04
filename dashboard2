@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | OE Idea Bank</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25em 0.75em;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 9999px;
+            text-transform: capitalize;
+        }
+        .status-new { background-color: #dbeafe; color: #1e40af; }
+        .status-reviewed { background-color: #fef9c3; color: #854d0e; }
+        .status-shortlisted { background-color: #d1fae5; color: #065f46; }
+        .status-rejected { background-color: #fee2e2; color: #991b1b; }
+        
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+        .modal-container {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 2xl; /* 672px */
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.95);
+            transition: all 0.3s ease-in-out;
+        }
+        .modal-visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-visible .modal-container {
+            transform: scale(1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Header Navigation -->
+    <nav class="bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                         <div class="flex items-center justify-center bg-indigo-500 rounded-full h-10 w-10">
+                            <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                    </div>
+                    <span class="ml-3 font-bold text-xl text-gray-800">OE Circle [Admin]</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#" class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                        <a href="#" class="text-gray-700 hover:bg-gray-200 hover:text-black px-3 py-2 rounded-md text-sm font-medium">Users</a>
+                        <a href="#" class="text-gray-700 hover:bg-gray-200 hover:text-black px-3 py-2 rounded-md text-sm font-medium">Settings</a>
+                    </div>
+                </div>
+                 <div class="flex items-center">
+                    <div class="ml-4">
+                        <img class="h-10 w-10 rounded-full" src="https://placehold.co/100x100/A5B4FC/312E81?text=AD" alt="Admin Avatar">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+
+        <h1 class="text-3xl font-bold text-gray-900 mb-6">Idea Bank Dashboard</h1>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i data-lucide="inbox" class="h-6 w-6 text-white bg-indigo-500 p-2 rounded-md"></i>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">Total Submissions</dt>
+                                <dd class="text-3xl font-bold text-gray-900" id="total-submissions">0</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i data-lucide="file-plus-2" class="h-6 w-6 text-white bg-blue-500 p-2 rounded-md"></i>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">New Submissions</d>
+                                <dd class="text-3xl font-bold text-gray-900" id="new-submissions">0</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i data-lucide="file-check-2" class="h-6 w-6 text-white bg-green-500 p-2 rounded-md"></i>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">Shortlisted Ideas</dt>
+                                <dd class="text-3xl font-bold text-gray-900" id="shortlisted-ideas">0</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i data-lucide="file-x-2" class="h-6 w-6 text-white bg-red-500 p-2 rounded-md"></i>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">Rejected Ideas</dt>
+                                <dd class="text-3xl font-bold text-gray-900" id="rejected-ideas">0</tr
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+            <div class="bg-white rounded-lg shadow p-6 lg:col-span-2">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Submissions Over Time</h3>
+                <canvas id="submissionsChart"></canvas>
+            </div>
+            <div class="bg-white rounded-lg shadow p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Submission Themes</h3>
+                <canvas id="themesChart"></canvas>
+            </div>
+        </div>
+
+        <!-- All Submissions Table -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-gray-800">All Submissions</h2>
+                <div class="flex space-x-2">
+                    <input type="text" id="search-input" class="rounded-md border-gray-300 shadow-sm sm:text-sm" placeholder="Search ideas...">
+                    <select id="status-filter" class="rounded-md border-gray-300 shadow-sm sm:text-sm">
+                        <option value="all">All Statuses</option>
+                        <option value="New">New</option>
+                        <option value="Reviewed">Reviewed</option>
+                        <option value="Shortlisted">Shortlisted</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Idea Title</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200" id="submission-table-body">
+                        <!-- Rows will be injected here by JavaScript -->
+                        <tr id="loading-row">
+                            <td colspan="4" class="px-6 py-4 text-center text-gray-500">Loading submissions...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Details Modal -->
+    <div id="details-modal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="flex justify-between items-center p-4 border-b">
+                <h3 class="text-lg font-bold" id="modal-title">Idea Details</h3>
+                <button id="modal-close-btn" class="text-gray-400 hover:text-gray-600">
+                    <i data-lucide="x" class="h-6 w-6"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <h4 class="font-semibold text-gray-800">Problem / Opportunity</h4>
+                    <p class="text-gray-600" id="modal-problem"></p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-800">Proposed Solution</h4>
+                    <p class="text-gray-600" id="modal-solution"></p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-800">Benefits</h4>
+                    <div class="flex flex-wrap gap-2" id="modal-benefits"></div>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-800">Submitted By</h4>
+                    <p class="text-gray-600" id="modal-submitted-by"></p>
+                </div>
+                <hr>
+                <div>
+                    <label for="modal-reviewer-comments" class="block text-sm font-medium text-gray-700">Reviewer Comments</label>
+                    <textarea id="modal-reviewer-comments" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"></textarea>
+                </div>
+            </div>
+            <div class="flex justify-end items-center p-4 bg-gray-50 border-t">
+                <span id="modal-save-spinner" class="hidden animate-spin h-5 w-5 text-indigo-600 mr-3"></span>
+                <span id="modal-save-message" class="text-sm text-green-600 mr-3"></span>
+                <button id="modal-save-btn" class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700">
+                    Save Comments (Demo)
+                </button>
+            </div>
+        </div>
+    </div>
+    
+
+    <script>
+        // --- Mock Data (This is your "local JSON file") ---
+        const mockSubmissions = [
+            {
+                id: "idea-001",
+                title: "Automate Weekly Reporting Process",
+                problem: "The weekly status report takes 4 hours for each PM to manually compile. This is tedious and prone to errors.",
+                solution: "Develop a simple script or Power Automate flow that pulls data from JIRA and our timesheet system into a standardized template.",
+                benefits: ["Time Savings", "Improved Quality"],
+                status: "New",
+                submittedBy: "user-jane-doe",
+                submittedAt: new Date("2025-10-28T09:30:00"),
+                comments: ""
+            },
+            {
+                id: "idea-002",
+                title: "Standardize Onboarding Checklists",
+                problem: "New hires have an inconsistent experience. Some miss crucial training on safety protocols.",
+                solution: "Create a single, digital onboarding checklist in our HR system that must be completed by the manager and the new hire, including mandatory e-signatures for safety modules.",
+                benefits: ["Enhanced Safety", "Better Employee Experience", "Improved Quality"],
+                status: "Shortlisted",
+                submittedBy: "user-mike-olsen",
+                submittedAt: new Date("2025-10-25T14:15:00"),
+                comments: "Great idea. Legal and HR are reviewing the e-signature part."
+            },
+            {
+                id: "idea-003",
+                title: "Forklift Battery Charging Log",
+                problem: "Forklift batteries are dying mid-shift because there's no way to track if they were charged properly.",
+                solution: "Place a simple paper log or a QR code scan system at the charging station for accountability.",
+                benefits: ["Time Savings", "Enhanced Safety"],
+                status: "Reviewed",
+                submittedBy: "user-warehouse-team",
+                submittedAt: new Date("2025-10-24T11:00:00"),
+                comments: "Good, simple fix. Ops manager to implement."
+            },
+            {
+                id: "idea-004",
+                title: "Install a new coffee machine",
+                problem: "The coffee in the breakroom is bad.",
+                solution: "Buy a new Nespresso machine.",
+                benefits: ["Better Employee Experience"],
+                status: "Rejected",
+                submittedBy: "user-sarah-c",
+                submittedAt: new Date("2025-10-22T08:00:00"),
+                comments: "While we appreciate the sentiment, this is out of scope for the OE Idea Bank. Please forward to facilities."
+            },
+             {
+                id: "idea-005",
+                title: "Optimize SQL Query for Dashboard X",
+                problem: "The main sales dashboard takes over 2 minutes to load, making it unusable for quick checks.",
+                solution: "The main query is missing an index on the `customer_id` field and is using a `SELECT *`. I can rewrite it to be more efficient.",
+                benefits: ["Time Savings", "Cost Savings"],
+                status: "New",
+                submittedBy: "user-dev-team",
+                submittedAt: new Date("2025-10-29T11:20:00"),
+                comments: ""
+            }
+        ];
+        
+        // --- Global Variables ---
+        let allSubmissions = []; // Local cache of all submissions
+        let currentFilters = {
+            status: 'all',
+            search: ''
+        };
+
+        // --- Main Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load mock data
+            allSubmissions = mockSubmissions.map(idea => ({...idea})); // Clone to avoid modifying original
+            
+            // Sort by date, newest first
+            allSubmissions.sort((a, b) => (b.submittedAt || 0) - (a.submittedAt || 0));
+            
+            updateDashboard();
+            lucide.createIcons();
+            addFilterListeners();
+            addModalListeners();
+        });
+
+
+        // --- Update Functions ---
+        function updateDashboard() {
+            renderTable();
+            updateStats();
+            updateCharts();
+        }
+
+        function renderTable() {
+            const tableBody = document.getElementById('submission-table-body');
+            tableBody.innerHTML = ''; // Clear existing
+            
+            // Apply filters
+            const filteredSubmissions = allSubmissions.filter(idea => {
+                const matchesStatus = currentFilters.status === 'all' || idea.status === currentFilters.status;
+                const matchesSearch = !currentFilters.search || idea.title.toLowerCase().includes(currentFilters.search);
+                return matchesStatus && matchesSearch;
+            });
+
+            if (filteredSubmissions.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="4" class="px-6 py-4 text-center text-gray-500">No submissions found.</td></tr>`;
+                return;
+            }
+
+            filteredSubmissions.forEach(idea => {
+                const date = idea.submittedAt ? idea.submittedAt.toLocaleDateString() : 'N/A';
+                const statusClass = `status-${idea.status?.toLowerCase() || 'new'}`;
+                
+                const row = document.createElement('tr');
+                row.className = "hover:bg-gray-50";
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">${idea.title}</div>
+                        <div class="text-sm text-gray-500 truncate" style="max-width: 250px;">${idea.problem}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${date}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <select class="status-select rounded-md border-gray-300 shadow-sm sm:text-sm" data-id="${idea.id}">
+                            <option value="New" ${idea.status === 'New' ? 'selected' : ''}>New</option>
+                            <option value="Reviewed" ${idea.status === 'Reviewed' ? 'selected' : ''}>Reviewed</option>
+                            <option value="Shortlisted" ${idea.status === 'Shortlisted' ? 'selected' : ''}>Shortlisted</option>
+                            <option value="Rejected" ${idea.status === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                        </select>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button class="view-details-btn text-indigo-600 hover:text-indigo-900" data-id="${idea.id}">View Details</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // Add event listeners after rows are created
+            addTableListeners();
+        }
+
+        function updateStats() {
+            document.getElementById('total-submissions').textContent = allSubmissions.length;
+            document.getElementById('new-submissions').textContent = allSubmissions.filter(s => s.status === 'New').length;
+            document.getElementById('shortlisted-ideas').textContent = allSubmissions.filter(s => s.status === 'Shortlisted').length;
+            document.getElementById('rejected-ideas').textContent = allSubmissions.filter(s => s.status === 'Rejected').length;
+        }
+
+        // --- Event Listeners ---
+        function addTableListeners() {
+            // Status change listener
+            document.querySelectorAll('.status-select').forEach(select => {
+                select.addEventListener('change', (e) => {
+                    const docId = e.target.dataset.id;
+                    const newStatus = e.target.value;
+                    
+                    // Find and update the idea in our local array (DEMO)
+                    const idea = allSubmissions.find(s => s.id === docId);
+                    if (idea) {
+                        idea.status = newStatus;
+                        console.log(`Updated status for ${docId} to ${newStatus} (Demo)`);
+                    }
+                    
+                    // Re-render stats
+                    updateStats();
+                });
+            });
+
+            // View details listener
+            document.querySelectorAll('.view-details-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const docId = e.target.dataset.id;
+                    openModal(docId);
+                });
+            });
+        }
+        
+        // Filter listeners
+        function addFilterListeners() {
+            document.getElementById('status-filter').addEventListener('change', (e) => {
+                currentFilters.status = e.target.value;
+                renderTable();
+            });
+            
+            document.getElementById('search-input').addEventListener('keyup', (e) => {
+                currentFilters.search = e.target.value.toLowerCase();
+                renderTable();
+            });
+        }
+        
+        // --- Modal Logic ---
+        const modal = document.getElementById('details-modal');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const modalSaveBtn = document.getElementById('modal-save-btn');
+        let currentModalIdeaId = null;
+
+        function addModalListeners() {
+            modalCloseBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal(); // Close on overlay click
+            });
+
+            modalSaveBtn.addEventListener('click', () => {
+                if (!currentModalIdeaId) return;
+
+                const comments = document.getElementById('modal-reviewer-comments').value;
+                
+                // Find and update in our local array (DEMO)
+                const idea = allSubmissions.find(s => s.id === currentModalIdeaId);
+                if (idea) {
+                    idea.comments = comments;
+                    console.log(`Saved comments for ${currentModalIdeaId} (Demo)`);
+                }
+
+                const spinner = document.getElementById('modal-save-spinner');
+                const message = document.getElementById('modal-save-message');
+                spinner.classList.remove('hidden');
+                message.textContent = '';
+                modalSaveBtn.disabled = true;
+                
+                // Simulate saving
+                setTimeout(() => {
+                    spinner.classList.add('hidden');
+                    modalSaveBtn.disabled = false;
+                    message.textContent = 'Saved! (Demo)';
+                    setTimeout(() => { message.textContent = ''; }, 2000);
+                }, 500);
+            });
+        }
+
+        function openModal(docId) {
+            const idea = allSubmissions.find(s => s.id === docId);
+            if (!idea) return;
+
+            currentModalIdeaId = docId;
+            document.getElementById('modal-title').textContent = idea.title;
+            document.getElementById('modal-problem').textContent = idea.problem;
+            document.getElementById('modal-solution').textContent = idea.solution;
+            document.getElementById('modal-submitted-by').textContent = idea.submittedBy;
+            document.getElementById('modal-reviewer-comments').value = idea.comments || '';
+            
+            const benefitsContainer = document.getElementById('modal-benefits');
+            benefitsContainer.innerHTML = '';
+            if (idea.benefits && idea.benefits.length > 0) {
+                idea.benefits.forEach(benefit => {
+                    const span = document.createElement('span');
+                    span.className = "inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-sm font-medium text-green-800";
+                    span.textContent = benefit;
+                    benefitsContainer.appendChild(span);
+                });
+            } else {
+                benefitsContainer.innerHTML = `<span class="text-sm text-gray-500">No benefits listed.</span>`;
+            }
+            
+            document.getElementById('modal-save-message').textContent = '';
+            modal.classList.add('modal-visible');
+        }
+
+        function closeModal() {
+            modal.classList.remove('modal-visible');
+            currentModalIdeaId = null;
+        }
+
+        // --- Chart Logic ---
+        function updateCharts() {
+            // Data for submission themes based on benefits
+            const themes = {
+                'Cost Savings': 0,
+                'Time Savings': 0,
+                'Improved Quality': 0,
+                'Enhanced Safety': 0,
+                'Better Employee Experience': 0,
+                'Other': 0
+            };
+            allSubmissions.forEach(idea => {
+                idea.benefits?.forEach(benefit => {
+                    if (themes.hasOwnProperty(benefit)) {
+                        themes[benefit]++;
+                    }
+                });
+            });
+
+            const themesChartCtx = document.getElementById('themesChart').getContext('2d');
+            // Destroy existing chart if it exists
+            if (window.themesChartInstance) {
+                window.themesChartInstance.destroy();
+            }
+            window.themesChartInstance = new Chart(themesChartCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(themes),
+                    datasets: [{
+                        data: Object.values(themes),
+                        backgroundColor: ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#6b7280'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+
+            // Data for submissions over time
+            const submissionsChartCtx = document.getElementById('submissionsChart').getContext('2d');
+            // Destroy existing chart if it exists
+            if (window.submissionsChartInstance) {
+                window.submissionsChartInstance.destroy();
+            }
+            window.submissionsChartInstance = new Chart(submissionsChartCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+                    datasets: [{
+                        label: 'Submissions',
+                        data: [5, 9, 3, 5, 12, 8, 15, 10, 18, allSubmissions.length], // Using total count as "current"
+                        borderColor: '#4f46e5',
+                        tension: 0.1
+                    }]
+                },
+                options: { responsive: true }
+            });
+        }
+    </script>
+</body>
+</html>
+
