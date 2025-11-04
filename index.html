@@ -312,27 +312,9 @@
                 }
              }, 1500);
         });
-
-  // Create idea record
-  const idea = {
-    title,
-    problem,
-    solution,
-    benefits,
-    date: new Date().toLocaleString()
-  };
-
-  // Store in localStorage
-  const existing = JSON.parse(localStorage.getItem("ideas")) || [];
-  existing.push(idea);
-  localStorage.setItem("ideas", JSON.stringify(existing));
-
-  alert("Idea submitted successfully!");
-  e.target.reset();
-});
-
 </body>
 </html>
+
 
 
 
