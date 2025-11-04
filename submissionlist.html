@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Submission List</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 p-6">
+
+<h1 class="text-2xl font-bold mb-6 text-gray-800">Submitted Ideas</h1>
+
+<table class="min-w-full divide-y divide-gray-200 bg-white shadow rounded-lg">
+  <thead class="bg-gray-100">
+    <tr>
+      <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Title</th>
+      <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Problem</th>
+      <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Solution</th>
+      <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Benefits</th>
+      <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Date</th>
+    </tr>
+  </thead>
+  <tbody id="idea-table" class="divide-y divide-gray-200"></tbody>
+</table>
+
+<script>
+const ideas = JSON.parse(localStorage.getItem("ideas")) || [];
+const table = document.getElementById("idea-table");
+
+ideas.forEach(idea => {
+  const row = document.createElement("tr");
+  row.innerHTML = `
+    <td class="px-4 py-2 text-sm text-gray-800">${idea.title}</td>
+    <td class="px-4 py-2 text-sm text-gray-800">${idea.problem}</td>
+    <td class="px-4 py-2 text-sm text-gray-800">${idea.solution}</td>
+    <td class="px-4 py-2 text-sm text-gray-800">${idea.benefits}</td>
+    <td class="px-4 py-2 text-sm text-gray-500">${idea.date}</td>
+  `;
+  table.appendChild(row);
+});
+</script>
+
+</body>
+</html>
