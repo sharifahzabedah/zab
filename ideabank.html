@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OE Circle | AI-Powered Idea Bank</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .gradient-bg {
+            background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+        }
+        .ai-gradient-bg {
+            background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+        }
+        .sparkle-button::before {
+            content: '✨';
+            margin-right: 0.5rem;
+            animation: sparkle 1.5s infinite;
+        }
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        .loader {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #8b5cf6;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation (Consistent with Hub) -->
+    <nav class="bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                         <div class="flex items-center justify-center bg-indigo-500 rounded-full h-10 w-10">
+                            <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                    </div>
+                    <span class="ml-3 font-bold text-xl text-gray-800">OE Circle</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#" class="text-gray-700 hover:bg-gray-200 hover:text-black px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                        <a href="#" class="text-gray-700 hover:bg-gray-200 hover:text-black px-3 py-2 rounded-md text-sm font-medium">Knowledge Hub</a>
+                        <a href="#" class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">Idea Bank</a>
+                        <a href="#" class="text-gray-700 hover:bg-gray-200 hover:text-black px-3 py-2 rounded-md text-sm font-medium">Challenges</a>
+                    </div>
+                </div>
+                 <div class="flex items-center">
+                    <div class="relative hidden md:block">
+                        <input type="text" class="bg-gray-100 rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Search...">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i data-lucide="search" class="h-5 w-5 text-gray-500"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <img class="h-10 w-10 rounded-full" src="https://placehold.co/100x100/E2E8F0/4A5568?text=AV" alt="User Avatar">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+
+        <!-- Hero Section -->
+        <div class="ai-gradient-bg rounded-xl shadow-lg p-8 md:p-12 mb-10 text-white text-center">
+            <i data-lucide="brain-circuit" class="h-16 w-16 mx-auto mb-4 text-white"></i>
+            <h1 class="text-4xl md:text-5xl font-bold mb-2">The AI-Powered Idea Bank</h1>
+            <p class="text-lg text-indigo-200 max-w-2xl mx-auto">Supercharge your ideas with our AI Assistant. Let's innovate smarter, together!</p>
+        </div>
+
+        <!-- Main Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left Column: Idea Submission Form -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow p-6 md:p-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">Submit Your Improvement Idea</h2>
+                    <form class="space-y-6">
+                        <div>
+                            <label for="idea-title" class="block text-sm font-medium text-gray-700">Idea Title</label>
+                            <input type="text" name="idea-title" id="idea-title" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="e.g., Automate Weekly Reporting Process">
+                        </div>
+
+                        <!-- AI Feature: Duplicate Check -->
+                        <div id="duplicate-check-container" class="hidden rounded-md bg-yellow-50 p-4">
+                           <div class="flex">
+                             <div class="flex-shrink-0">
+                               <i data-lucide="alert-triangle" class="h-5 w-5 text-yellow-400"></i>
+                             </div>
+                             <div class="ml-3">
+                               <h3 class="text-sm font-medium text-yellow-800">Hold on! We found similar ideas:</h3>
+                               <div class="mt-2 text-sm text-yellow-700">
+                                 <ul class="list-disc space-y-1 pl-5">
+                                   <li><a href="#" class="underline">Automated reporting using Power BI</a></li>
+                                   <li><a href="#" class="underline">Streamline end-of-week status updates</a></li>
+                                 </ul>
+                                 <p class="mt-2">Feel free to build on these or continue with your new idea.</p>
+                               </div>
+                             </div>
+                           </div>
+                        </div>
+                        
+                        <div>
+                            <label for="problem-statement" class="block text-sm font-medium text-gray-700">What is the problem or opportunity?</label>
+                            <div class="relative">
+                                <textarea id="problem-statement" name="problem-statement" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Describe the current situation..."></textarea>
+                                <button type="button" class="absolute bottom-2 right-2 sparkle-button text-xs bg-indigo-100 text-indigo-700 font-semibold py-1 px-2 rounded-md hover:bg-indigo-200">AI Assist</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="solution" class="block text-sm font-medium text-gray-700">What is your proposed solution?</label>
+                            <textarea id="solution" name="solution" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" placeholder="Explain your idea..."></textarea>
+                        </div>
+
+                         <!-- AI Feature: Smart Tags -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">AI-Suggested Tags</label>
+                            <div id="ai-tags" class="mt-2 flex flex-wrap gap-2 items-center">
+                                <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">Analyzing...</span>
+                                <div class="loader"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                             <label class="block text-sm font-medium text-gray-700">Potential benefits?</label>
+                             <div class="mt-2 grid grid-cols-2 gap-4">
+                                <!-- ... existing checkbox code ... -->
+                                <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"> <span class="ml-2 text-gray-700">Cost Savings</span></label>
+                                <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"> <span class="ml-2 text-gray-700">Time Savings</span></label>
+                                <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"> <span class="ml-2 text-gray-700">Improved Quality</span></label>
+                                <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"> <span class="ml-2 text-gray-700">Enhanced Safety</span></label>
+                                <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"> <span class="ml-2 text-gray-700">Better Employee Experience</span></label>
+                                 <label class="flex items-center"><input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"> <span class="ml-2 text-gray-700">Other</span></label>
+                             </div>
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button type="submit" class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-6 text-base font-medium text-white shadow-sm hover:bg-indigo-700">
+                                <i data-lucide="send" class="h-5 w-5 mr-2"></i>
+                                Submit Idea
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Column: Info & AI Widgets -->
+            <div class="space-y-8">
+
+                 <!-- AI Feature: Impact Score -->
+                 <div class="bg-white rounded-lg shadow p-5">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center"><i data-lucide="gauge-circle" class="h-6 w-6 mr-3 text-indigo-500"></i>AI Analysis Preview</h3>
+                     <div class="space-y-4">
+                        <div id="impact-score">
+                            <div class="flex justify-between mb-1">
+                                <span class="text-base font-medium text-purple-700">Potential Impact</span>
+                                <span class="text-sm font-medium text-purple-700">Medium</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div class="bg-purple-600 h-2.5 rounded-full" style="width: 65%"></div>
+                            </div>
+                        </div>
+                        <div id="feasibility-score">
+                            <div class="flex justify-between mb-1">
+                                <span class="text-base font-medium text-teal-700">Estimated Feasibility</span>
+                                <span class="text-sm font-medium text-teal-700">High</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div class="bg-teal-500 h-2.5 rounded-full" style="width: 80%"></div>
+                            </div>
+                        </div>
+                    </div>
+                     <p class="text-xs text-gray-500 mt-4">Note: This is an AI-generated estimate based on your input. Scores will be finalized upon review.</p>
+                </div>
+
+                <!-- Widget: Objective -->
+                <div class="bg-white rounded-lg shadow p-5">
+                   <!-- ... existing objective code ... -->
+                   <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center"><i data-lucide="target" class="h-6 w-6 mr-3 text-indigo-500"></i>Our Objective</h3>
+                    <p class="text-gray-600">To create a central hub for innovative ideas that drive continuous improvement. We aim to empower every employee to contribute to our operational excellence journey, turning small suggestions into significant, company-wide impact.</p>
+                </div>
+
+                <!-- Widget: FAQ Accordion -->
+                <div class="bg-white rounded-lg shadow p-5">
+                    <!-- ... existing FAQ code ... -->
+                    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center"><i data-lucide="help-circle" class="h-6 w-6 mr-3 text-indigo-500"></i>FAQ</h3>
+                    <div class="space-y-3" id="faq-accordion">
+                        <!-- FAQ Item 1 -->
+                        <div>
+                            <button class="accordion-header flex justify-between items-center w-full text-left font-semibold text-gray-700">
+                                <span>What happens after I submit my idea?</span>
+                                <i data-lucide="chevron-down" class="h-5 w-5 transition-transform duration-300"></i>
+                            </button>
+                            <div class="accordion-content pt-2">
+                                <p class="text-gray-600 text-sm">Your idea is sent to the OE review committee. You'll receive a notification once it has been reviewed, typically within 5-7 business days.</p>
+                            </div>
+                        </div>
+                        <!-- FAQ Item 2 -->
+                         <div>
+                            <button class="accordion-header flex justify-between items-center w-full text-left font-semibold text-gray-700">
+                                <span>Are there rewards for good ideas?</span>
+                                <i data-lucide="chevron-down" class="h-5 w-5 transition-transform duration-300"></i>
+                            </button>
+                            <div class="accordion-content pt-2">
+                                <p class="text-gray-600 text-sm">Yes! You earn 25 points on the community leaderboard for every accepted idea. Implemented ideas with significant impact are also eligible for quarterly awards.</p>
+                            </div>
+                        </div>
+                        <!-- FAQ Item 3 -->
+                        <div>
+                            <button class="accordion-header flex justify-between items-center w-full text-left font-semibold text-gray-700">
+                                <span>How does the AI analysis work?</span>
+                                <i data-lucide="chevron-down" class="h-5 w-5 transition-transform duration-300"></i>
+                            </button>
+                            <div class="accordion-content pt-2">
+                                <p class="text-gray-600 text-sm">Our AI analyzes the text of your idea, compares it to past successful projects, and evaluates it against our core OE principles to provide a preliminary assessment. It helps our team review ideas more effectively!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        lucide.createIcons();
+
+        // Simple accordion script
+        const accordionHeaders = document.querySelectorAll('.accordion-header');
+        // ... existing accordion script ...
+        accordionHeaders.forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const icon = header.querySelector('i[data-lucide="chevron-down"]');
+                
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                    icon.style.transform = 'rotate(0deg)';
+                } else {
+                    document.querySelectorAll('.accordion-content').forEach(c => c.style.maxHeight = null);
+                    document.querySelectorAll('.accordion-header i').forEach(i => i.style.transform = 'rotate(0deg)');
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            });
+        });
+
+        // --- Mock AI Interaction Scripts ---
+
+        // 1. Duplicate Check Simulation
+        const ideaTitleInput = document.getElementById('idea-title');
+        const duplicateContainer = document.getElementById('duplicate-check-container');
+        let debounceTimer;
+        ideaTitleInput.addEventListener('keyup', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                if (ideaTitleInput.value.toLowerCase().includes('report')) {
+                    duplicateContainer.classList.remove('hidden');
+                } else {
+                    duplicateContainer.classList.add('hidden');
+                }
+            }, 1000);
+        });
+        
+        // 2. AI Tags Simulation
+        const problemTextarea = document.getElementById('problem-statement');
+        const tagsContainer = document.getElementById('ai-tags');
+        problemTextarea.addEventListener('keyup', () => {
+             clearTimeout(debounceTimer);
+             debounceTimer = setTimeout(() => {
+                if (problemTextarea.value.length > 20) {
+                    tagsContainer.innerHTML = `
+                        <span class="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-sm font-medium text-blue-800">#automation</span>
+                        <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-sm font-medium text-green-800">#reporting</span>
+                        <span class="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-sm font-medium text-yellow-800">#time-saving</span>
+                    `;
+                } else if (problemTextarea.value.length > 0) {
+                     tagsContainer.innerHTML = `<span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">Keep typing for suggestions...</span>`;
+                }
+                else {
+                    tagsContainer.innerHTML = `<span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">Analyzing...</span><div class="loader"></div>`;
+                }
+             }, 1500);
+        });
+
+    </script>
+</body>
+</html>
+
