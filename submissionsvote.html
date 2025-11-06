@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Idea Gallery | OE Circle</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .gradient-bg {
+            background: linear-gradient(90deg, #4f46e5 0%, #7c3aed 100%);
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25em 0.75em;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 9999px;
+            text-transform: capitalize;
+        }
+        .status-new { background-color: #dbeafe; color: #1e40af; }
+        .status-reviewed { background-color: #fef9c3; color: #854d0e; }
+        .status-shortlisted { background-color: #d1fae5; color: #065f46; }
+        .status-rejected { background-color: #fee2e2; color: #991b1b; }
+
+        .vote-button {
+            transition: all 0.2s ease-in-out;
+        }
+        .vote-button.voted {
+            background-color: #4f46e5;
+            color: white;
+            border-color: #4f46e5;
+        }
+        .vote-button:not(.voted):hover {
+            background-color: #eef2ff;
+            border-color: #c7d2fe;
+        }
+        .sort-tab.active {
+            border-bottom-color: #4f46e5;
+            color: #4f46e5;
+            font-weight: 600;
+        }
+        .sort-tab {
+            border-bottom: 2px solid transparent;
+        }
+
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Header Navigation -->
+    <nav class="bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                         <div class="flex items-center justify-center bg-indigo-500 rounded-full h-10 w-10">
+                            <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                    </div>
+                    <span class="ml-3 font-bold text-xl text-gray-800">OE Circle</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#" class="text-gray-700 hover:bg-gray-200 hover:text-black px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                        <a href="#" class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">Idea Bank</a>
+                        <a href="#" class="text-gray-700 hover:bg-gray-200 hover:text-black px-3 py-2 rounded-md text-sm font-medium">Challenges</a>
+                    </div>
+                </div>
+                 <div class="flex items-center">
+                    <div class="ml-4">
+                        <img class="h-10 w-10 rounded-full" src="https://placehold.co/100x100/E2E8F0/4A5568?text=AV" alt="User Avatar">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+
+        <!-- Page Header & CTA Button -->
+        <div class="md:flex md:items-center md:justify-between mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Community Idea Gallery</h1>
+                <p class="text-lg text-gray-600">Browse, vote, and get inspired by ideas from your colleagues.</p>
+            </div>
+            <div class="mt-4 md:mt-0">
+                <a href="index.html" class="inline-flex items-center justify-center rounded-lg border border-transparent gradient-bg py-3 px-6 text-base font-medium text-white shadow-sm hover:opacity-90">
+                    <i data-lucide="plus" class="h-5 w-5 mr-2"></i>
+                    Submit Your Idea
+                </a>
+            </div>
+        </div>
+
+        <!-- Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Left Column: Idea Gallery -->
+            <div class="lg:col-span-2">
+                <!-- Sort Tabs -->
+                <div class="border-b border-gray-200 mb-4">
+                    <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                        <button class="sort-tab active py-3 px-1 text-sm font-medium text-gray-500 hover:text-gray-700" data-sort="trending">
+                            Trending
+                        </button>
+                        <button class="sort-tab py-3 px-1 text-sm font-medium text-gray-500 hover:text-gray-700" data-sort="newest">
+                            Newest
+                        </button>
+                         <button class="sort-tab py-3 px-1 text-sm font-medium text-gray-500 hover:text-gray-700" data-sort="shortlisted">
+                            Shortlisted
+                        </button>
+                    </nav>
+                </div>
+                
+                <!-- Idea Card Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="idea-gallery-grid">
+                    <!-- Idea cards will be injected here by JavaScript -->
+                    <p id="loading-message" class="text-gray-500">Loading ideas...</p>
+                </div>
+            </div>
+
+            <!-- Right Column: Leaderboard -->
+            <div class="lg:col-span-1 space-y-8">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">Top Contributors</h2>
+                    <ul class="space-y-4" id="leaderboard-list">
+                        <!-- Leaderboard items will be injected here by JavaScript -->
+                        <li class="text-sm text-gray-500">Loading leaderboard...</li>
+                    </ul>
+                </div>
+
+                 <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">How It Works</h2>
+                    <ol class="list-decimal list-inside space-y-2 text-gray-600">
+                        <li>Submit your idea using the button above.</li>
+                        <li>Browse ideas from others and vote for your favorites.</li>
+                        <li>The most-voted ideas get reviewed by our SMEs.</li>
+                        <li>Track your idea's status right here!</li>
+                    </ol>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    
+    <script>
+        // --- Mock Data (This is your "local JSON file") ---
+        // Added 'votes' to each idea
+        const mockSubmissions = [
+            {
+                id: "idea-001",
+                title: "Automate Weekly Reporting Process",
+                problem: "The weekly status report takes 4 hours for each PM to manually compile. This is tedious and prone to errors.",
+                solution: "Develop a simple script or Power Automate flow that pulls data from JIRA and our timesheet system into a standardized template.",
+                benefits: ["Time Savings", "Improved Quality"],
+                status: "New",
+                submittedBy: "user-jane-doe",
+                submittedByName: "Jane Doe",
+                division: "Operations",
+                submittedAt: new Date("2025-10-28T09:30:00"),
+                comments: "",
+                votes: 28
+            },
+            {
+                id: "idea-002",
+                title: "Standardize Onboarding Checklists",
+                problem: "New hires have an inconsistent experience. Some miss crucial training on safety protocols.",
+                solution: "Create a single, digital onboarding checklist in our HR system that must be completed by the manager and the new hire, including mandatory e-signatures for safety modules.",
+                benefits: ["Enhanced Safety", "Better Employee Experience", "Improved Quality"],
+                status: "Shortlisted",
+                submittedBy: "user-mike-olsen",
+                submittedByName: "Mike Olsen",
+                division: "Engineering",
+                submittedAt: new Date("2025-10-25T14:15:00"),
+                comments: "Great idea. Legal and HR are reviewing the e-signature part.",
+                votes: 75
+            },
+            {
+                id: "idea-003",
+                title: "Forklift Battery Charging Log",
+                problem: "Forklift batteries are dying mid-shift because there's no way to track if they were charged properly.",
+                solution: "Place a simple paper log or a QR code scan system at the charging station for accountability.",
+                benefits: ["Time Savings", "Enhanced Safety"],
+                status: "Reviewed",
+                submittedBy: "user-warehouse-team",
+                submittedByName: "Warehouse Team",
+                division: "Operations",
+                submittedAt: new Date("2025-10-24T11:00:00"),
+                comments: "Good, simple fix. Ops manager to implement.",
+                votes: 42
+            },
+            {
+                id: "idea-004",
+                title: "Install a new coffee machine",
+                problem: "The coffee in the breakroom is bad.",
+                solution: "Buy a new Nespresso machine.",
+                benefits: ["Better Employee Experience"],
+                status: "Rejected",
+                submittedBy: "user-sarah-c",
+                submittedByName: "Sarah Chen",
+                division: "Marketing",
+                submittedAt: new Date("2025-10-22T08:00:00"),
+                comments: "While we appreciate the sentiment, this is out of scope for the OE Idea Bank. Please forward to facilities.",
+                votes: 5
+            },
+             {
+                id: "idea-005",
+                title: "Optimize SQL Query for Dashboard X",
+                problem: "The main sales dashboard takes over 2 minutes to load, making it unusable for quick checks.",
+                solution: "The main query is missing an index on the `customer_id` field and is using a `SELECT *`. I can rewrite it to be more efficient.",
+                benefits: ["Time Savings", "Cost Savings"],
+                status: "New",
+                submittedBy: "user-dev-team",
+                submittedByName: "Dev Team",
+                division: "Engineering",
+                submittedAt: new Date("2025-10-29T11:20:00"),
+                comments: "",
+                votes: 18
+            },
+            {
+                id: "idea-006",
+                title: "Marketing Workflow Automation",
+                problem: "Manually tracking campaign KPIs is slow.",
+                solution: "Use a tool to pipe all ad platform data into one dashboard.",
+                benefits: ["Time Savings", "Improved Quality"],
+                status: "New",
+                submittedBy: "user-sarah-c",
+                submittedByName: "Sarah Chen",
+                division: "Marketing",
+                submittedAt: new Date("2025-10-29T14:00:00"),
+                comments: "",
+                votes: 36
+            },
+            {
+                id: "idea-007",
+                title: "Reduce Forklift Path Overlap",
+                problem: "Two forklifts often need the same aisle.",
+                solution: "Implement a one-way system for main aisles.",
+                benefits: ["Enhanced Safety", "Time Savings"],
+                status: "Reviewed",
+                submittedBy: "user-jane-doe",
+                submittedByName: "Jane Doe",
+                division: "Operations",
+                submittedAt: new Date("2025-10-30T10:00:00"),
+                comments: "Safety committee to review.",
+                votes: 51
+            }
+        ];
+        
+        let allSubmissions = [];
+        let currentSort = 'trending';
+        let votedIdeas = new Set(); // Use a Set to track voted ideas for the demo session
+
+        // --- Main Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            allSubmissions = mockSubmissions.map(idea => ({...idea}));
+            
+            updatePage();
+            lucide.createIcons();
+            addSortListeners();
+        });
+
+        // --- Update Functions ---
+        function updatePage() {
+            sortIdeas();
+            renderIdeaGallery();
+            renderLeaderboard();
+        }
+
+        function sortIdeas() {
+            if (currentSort === 'newest') {
+                allSubmissions.sort((a, b) => (b.submittedAt || 0) - (a.submittedAt || 0));
+            } else if (currentSort === 'trending') {
+                allSubmissions.sort((a, b) => (b.votes || 0) - (a.votes || 0));
+            } else if (currentSort === 'shortlisted') {
+                 allSubmissions.sort((a, b) => {
+                    // Show shortlisted first, then sort by votes
+                    if (a.status === 'Shortlisted' && b.status !== 'Shortlisted') return -1;
+                    if (a.status !== 'Shortlisted' && b.status === 'Shortlisted') return 1;
+                    return (b.votes || 0) - (a.votes || 0);
+                });
+            }
+        }
+
+        function renderIdeaGallery() {
+            const galleryGrid = document.getElementById('idea-gallery-grid');
+            galleryGrid.innerHTML = ''; // Clear existing
+            
+            document.getElementById('loading-message')?.remove();
+
+            if (allSubmissions.length === 0) {
+                galleryGrid.innerHTML = `<p class="text-gray-500">No submissions found.</p>`;
+                return;
+            }
+
+            // Apply filter based on sort tab
+            let filteredSubmissions = allSubmissions;
+            if (currentSort === 'shortlisted') {
+                filteredSubmissions = allSubmissions.filter(idea => idea.status === 'Shortlisted');
+            }
+
+            filteredSubmissions.forEach(idea => {
+                const statusClass = `status-${idea.status?.toLowerCase() || 'new'}`;
+                const votedClass = votedIdeas.has(idea.id) ? 'voted' : '';
+                
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-lg shadow p-5 flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="status-badge ${statusClass}">${idea.status}</span>
+                            <span class="text-xs text-gray-500">${idea.submittedAt.toLocaleDateString()}</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-gray-900 mb-2">${idea.title}</h3>
+                        <p class="text-sm text-gray-600 line-clamp-3">${idea.problem}</p>
+                    </div>
+                    <div class="flex justify-between items-center mt-6 pt-4 border-t border-gray-100">
+                        <span class="text-sm text-gray-500">By ${idea.submittedByName}</span>
+                        <button class="vote-button ${votedClass} inline-flex items-center border border-gray-300 rounded-full px-4 py-1 text-sm font-medium text-gray-700" data-id="${idea.id}">
+                            <i data-lucide="thumbs-up" class="h-4 w-4 mr-2"></i>
+                            <span class="vote-count">${idea.votes}</span>
+                        </button>
+                    </div>
+                `;
+                galleryGrid.appendChild(card);
+            });
+
+            // Add listeners to new buttons
+            addVoteListeners();
+            lucide.createIcons();
+        }
+
+        // --- Leaderboard Function (Copied from Admin) ---
+        function renderLeaderboard() {
+            const contributorCounts = {};
+            
+            // Count submissions per person
+            allSubmissions.forEach(idea => {
+                const name = idea.submittedByName || 'Anonymous';
+                const division = idea.division || 'Unknown';
+                if (!contributorCounts[name]) {
+                    contributorCounts[name] = { count: 0, division: division, name: name };
+                }
+                contributorCounts[name].count++;
+            });
+
+            const sortedContributors = Object.values(contributorCounts).sort((a, b) => b.count - a.count);
+            const leaderboardList = document.getElementById('leaderboard-list');
+            leaderboardList.innerHTML = '';
+            
+            const top3 = sortedContributors.slice(0, 3);
+            
+            if (top3.length === 0) {
+                 leaderboardList.innerHTML = `<li class="text-sm text-gray-500">No submissions yet.</li>`;
+                 return;
+            }
+
+            const rankColors = ['text-yellow-500', 'text-gray-400', 'text-yellow-700'];
+            
+            top3.forEach((contributor, index) => {
+                const li = document.createElement('li');
+                li.className = 'flex items-center';
+                const avatarText = contributor.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                
+                li.innerHTML = `
+                    <span class="text-lg font-bold ${rankColors[index]} mr-3">${index + 1}.</span>
+                    <img class="h-10 w-10 rounded-full mr-3" src="https://placehold.co/100x100/E0E7FF/4338CA?text=${avatarText}" alt="">
+                    <div class="flex-1">
+                        <p class="font-semibold text-gray-800">${contributor.name}</p>
+                        <p class="text-sm text-gray-500">${contributor.division}</p>
+                    </div>
+                    <span class="font-bold text-gray-800">${contributor.count} ${contributor.count > 1 ? 'Ideas' : 'Idea'}</span>
+                `;
+                leaderboardList.appendChild(li);
+            });
+        }
+
+        // --- Event Listeners ---
+        function addSortListeners() {
+            document.querySelectorAll('.sort-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    // Update active tab style
+                    document.querySelectorAll('.sort-tab').forEach(t => t.classList.remove('active'));
+                    e.currentTarget.classList.add('active');
+                    
+                    // Get new sort and update
+                    currentSort = e.currentTarget.dataset.sort;
+                    updatePage();
+                });
+            });
+        }
+
+        function addVoteListeners() {
+            document.querySelectorAll('.vote-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const btn = e.currentTarget;
+                    const ideaId = btn.dataset.id;
+                    
+                    // Find in local data
+                    const idea = allSubmissions.find(s => s.id === ideaId);
+                    if (!idea) return;
+                    
+                    // Simulate voting (Demo)
+                    if (votedIdeas.has(ideaId)) {
+                        // Unvote
+                        idea.votes--;
+                        votedIdeas.delete(ideaId);
+                        btn.classList.remove('voted');
+                    } else {
+                        // Vote
+                        idea.votes++;
+                        votedIdeas.add(ideaId);
+                        btn.classList.add('voted');
+                    }
+                    
+                    // Update count on button
+                    btn.querySelector('.vote-count').textContent = idea.votes;
+                    
+                    // If sorting by trending, re-sort and render
+                    if (currentSort === 'trending') {
+                        sortIdeas();
+                        renderIdeaGallery();
+                    }
+                });
+            });
+        }
+
+    </script>
+</body>
+</html>
